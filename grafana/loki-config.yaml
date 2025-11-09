@@ -44,6 +44,7 @@ compactor:
 
 limits_config:
   retention_period: 30d
+  deletion_mode: filter-and-delete
 
 table_manager:
   retention_deletes_enabled: true
