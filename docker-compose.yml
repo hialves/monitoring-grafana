@@ -1,0 +1,36 @@
+services:
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./_data/grafana:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
+    environment:
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+      - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
+    networks:
+      - monitoring
+    depends_on:
+      - loki
+
+  loki:
+    image: grafana/loki:latest
+    container_name: loki
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/loki-config.yaml
+    volumes:
+      - ./_data/loki:/loki
+      - ./grafana/loki-config.yaml:/etc/loki/loki-config.yaml
+    networks:
+      - monitoring
+    restart: unless-stopped
+
+networks:
+  monitoring:
+    external: true
+    driver: bridge
+
